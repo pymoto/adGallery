@@ -45,7 +45,17 @@ export async function POST(request: NextRequest) {
     // 決済完了時の処理
     if (event.type === "checkout.session.completed") {
       const session = event.data.object
-      const { ad_id, user_id, pricing_tier_id } = session.metadata
+      const metadata = session.metadata
+      
+      if (!metadata) {
+        console.error("Session metadata not found")
+        return NextResponse.json(
+          { error: "Session metadata not found" },
+          { status: 400 }
+        )
+      }
+      
+      const { ad_id, user_id, pricing_tier_id } = metadata
 
       // 決済ステータスを更新
       const { error: updateError } = await supabase
