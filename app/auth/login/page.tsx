@@ -43,7 +43,6 @@ export default function LoginPage() {
         console.error("Login error details:", {
           message: result.error.message,
           status: result.error.status,
-          statusText: result.error.statusText,
           error: result.error
         })
         setError(result.error.message || "ログインに失敗しました")

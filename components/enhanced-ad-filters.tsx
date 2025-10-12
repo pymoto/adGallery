@@ -56,7 +56,7 @@ export function EnhancedAdFilters({
         
         // 人気順でソートして上位10個を取得
         const sortedTags = Object.entries(tagCounts)
-          .sort(([,a], [,b]) => b - a)
+          .sort(([,a], [,b]) => (b as number) - (a as number))
           .slice(0, 10)
           .map(([tag]) => tag)
         

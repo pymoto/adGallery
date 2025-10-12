@@ -40,6 +40,24 @@ export default function AdDetailPage({ params }: { params: Promise<{ id: string 
 
         setAd(adData)
 
+        // 閲覧を記録
+        try {
+          await fetch(`/api/ads/${resolvedParams.id}/track`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              type: "view",
+              userAgent: navigator.userAgent,
+              ipAddress: "127.0.0.1" // 実際の実装では適切なIPアドレスを取得
+            }),
+          })
+        } catch (trackingError) {
+          console.error("Tracking error:", trackingError)
+          // トラッキングエラーは無視（ユーザー体験に影響しない）
+        }
+
       } catch (error) {
         console.error("Error fetching ad:", error)
         notFound()
@@ -162,7 +180,28 @@ export default function AdDetailPage({ params }: { params: Promise<{ id: string 
                 <Button 
                   variant="outline" 
                   size="icon"
-                  onClick={() => window.open(ad.link_url, '_blank', 'noopener,noreferrer')}
+                  onClick={async () => {
+                    // クリックを記録
+                    try {
+                      await fetch(`/api/ads/${ad.id}/track`, {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          type: "click",
+                          userAgent: navigator.userAgent,
+                          ipAddress: "127.0.0.1" // 実際の実装では適切なIPアドレスを取得
+                        }),
+                      })
+                    } catch (trackingError) {
+                      console.error("Click tracking error:", trackingError)
+                      // トラッキングエラーは無視（ユーザー体験に影響しない）
+                    }
+                    
+                    // 外部リンクを開く
+                    window.open(ad.link_url, '_blank', 'noopener,noreferrer')
+                  }}
                 >
                   <ExternalLink className="w-4 h-4" />
                 </Button>

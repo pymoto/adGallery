@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Heart, Eye, Trash2, ExternalLink, Edit } from "lucide-react"
+import { Heart, Eye, Trash2, ExternalLink, Edit, BarChart3 } from "lucide-react"
 import type { Ad } from "@/lib/types"
 import { createClient } from "@/lib/client"
 import { useState, useEffect } from "react"
@@ -216,6 +216,19 @@ export function MyAdCard({ ad, onDelete }: MyAdCardProps) {
           <Edit className="w-4 h-4" />
         </Button>
         
+        {/* 分析ボタン */}
+        <Button
+          variant="secondary"
+          size="sm"
+          className="absolute top-2 left-12 opacity-0 group-hover:opacity-100 transition-opacity"
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            router.push(`/analytics/${ad.id}`)
+          }}
+        >
+          <BarChart3 className="w-4 h-4" />
+        </Button>
         
         {/* 削除ボタン */}
         <Button

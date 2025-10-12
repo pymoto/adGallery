@@ -12,7 +12,10 @@ const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
   : null
 
 export default function Checkout({ productId, adData }: { productId: string; adData: string }) {
-  const startCheckoutSessionForProduct = useCallback(() => startCheckoutSession(productId, adData), [productId, adData])
+  const startCheckoutSessionForProduct = useCallback(async () => {
+    const result = await startCheckoutSession(productId, adData)
+    return result || ""
+  }, [productId, adData])
 
   // Stripeが設定されていない場合はモック決済画面を表示
   if (!stripePromise) {

@@ -2,10 +2,11 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Upload, User, Home } from "lucide-react"
+import { Upload, User, Home, Star } from "lucide-react"
 import { createClient } from "@/lib/client"
 import { useEffect, useState } from "react"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export function Header() {
   const [user, setUser] = useState<SupabaseUser | null>(null)
@@ -68,6 +69,15 @@ export function Header() {
               ホーム
             </Link>
           </Button>
+          {user && (
+            <Button variant="ghost" size="sm" className="gap-2" asChild>
+              <Link href="/favorites">
+                <Star className="w-4 h-4" />
+                お気に入り
+              </Link>
+            </Button>
+          )}
+          <ThemeToggle />
           {isLoading ? (
             <div className="text-sm text-muted-foreground">読み込み中...</div>
           ) : user ? (

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { createBrowserClient } from "@/lib/client"
 import { Mail, AlertCircle, CheckCircle } from "lucide-react"
+import { shouldShowDevMessage, getEmailConfirmationMessage } from "@/lib/env"
 
 export default function SignUpSuccessPage() {
   const [isResending, setIsResending] = useState(false)
@@ -62,6 +63,14 @@ export default function SignUpSuccessPage() {
               <p className="text-sm text-muted-foreground">
                 登録が完了しました。メールアドレスに確認メールを送信しましたので、メール内のリンクをクリックしてアカウントを有効化してください。
               </p>
+              
+              {!shouldShowDevMessage && (
+                <div className="rounded-lg bg-blue-50 p-4">
+                  <p className="text-sm text-blue-700">
+                    <strong>メール確認が必要です。</strong> 登録したメールアドレスを確認してください。
+                  </p>
+                </div>
+              )}
 
               <div className="rounded-lg bg-muted p-4 space-y-2">
                 <p className="text-sm font-medium">メールが届かない場合：</p>
@@ -103,12 +112,13 @@ export default function SignUpSuccessPage() {
               </Button>
             </div>
 
-            <div className="pt-4 border-t">
-              <p className="text-xs text-muted-foreground">
-                <strong>開発者向け：</strong> 開発環境でメール確認を無効にするには、Supabaseダッシュボード →
-                Authentication → Providers → Email → "Confirm email"をOFFにしてください。
-              </p>
-            </div>
+            {shouldShowDevMessage && (
+              <div className="pt-4 border-t">
+                <p className="text-xs text-muted-foreground">
+                  <strong>{getEmailConfirmationMessage().title}</strong> {getEmailConfirmationMessage().message}
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
