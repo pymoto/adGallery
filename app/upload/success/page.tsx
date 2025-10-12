@@ -54,7 +54,7 @@ function SuccessContent() {
           return
         }
 
-        if (payment.status === "completed" && payment.ads.is_published) {
+        if (payment.status === "completed" && payment.ads && payment.ads.is_published) {
           setAdTitle(payment.ads.title)
           setStatus("success")
         } else {
