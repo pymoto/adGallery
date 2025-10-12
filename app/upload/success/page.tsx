@@ -54,8 +54,8 @@ function SuccessContent() {
           return
         }
 
-        if (payment.status === "completed" && payment.ads && payment.ads.is_published) {
-          setAdTitle(payment.ads.title)
+        if (payment.status === "completed" && payment.ads && Array.isArray(payment.ads) && payment.ads.length > 0 && payment.ads[0].is_published) {
+          setAdTitle(payment.ads[0].title)
           setStatus("success")
         } else {
           // 決済は完了しているが、広告がまだ公開されていない場合
