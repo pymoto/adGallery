@@ -50,7 +50,13 @@ export default function SignUpPage() {
 
       if (error) throw error
 
-      router.push(`/auth/sign-up-success?email=${encodeURIComponent(email)}`)
+      // メール確認が必要な場合の処理
+      if (data.user && !data.user.email_confirmed_at) {
+        router.push(`/auth/sign-up-success?email=${encodeURIComponent(email)}`)
+      } else {
+        // メール確認が不要な場合（開発環境など）
+        router.push(`/auth/sign-up-success?email=${encodeURIComponent(email)}&confirmed=true`)
+      }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "エラーが発生しました"
       setError(errorMessage)
