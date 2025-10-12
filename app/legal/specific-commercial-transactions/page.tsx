@@ -17,22 +17,26 @@ export default function SpecificCommercialTransactionsPage() {
               <div className="space-y-4">
                 <div>
                   <h3 className="text-lg font-semibold mb-2">事業者名</h3>
-                  <p>株式会社AdGallery（仮）</p>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">運営責任者</h3>
-                  <p>代表取締役 山田太郎（仮）</p>
+                  <p>山田太郎（個人事業主）</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    ※個人事業主として運営しています
+                  </p>
                 </div>
 
                 <div>
                   <h3 className="text-lg font-semibold mb-2">所在地</h3>
-                  <p>〒100-0001<br />東京都千代田区千代田1-1-1（仮）</p>
+                  <p>〒389-0103<br />長野県軽井沢町軽井沢1-2-3（仮）</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    ※事業所として使用している場所を表示しています
+                  </p>
                 </div>
 
                 <div>
                   <h3 className="text-lg font-semibold mb-2">電話番号</h3>
                   <p>03-1234-5678（仮）</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    営業時間：平日 9:00-18:00（土日祝日を除く）
+                  </p>
                 </div>
 
                 <div>

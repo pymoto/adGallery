@@ -8,13 +8,17 @@ export async function GET(request: NextRequest) {
     const query = searchParams.get("q")
     const category = searchParams.get("category")
     const tag = searchParams.get("tag")
+    const limit = parseInt(searchParams.get("limit") || "50")
+    const offset = parseInt(searchParams.get("offset") || "0")
 
-    // パラメータがない場合は全広告を返す
+    // パラメータがない場合は公開済み広告のみを返す（ページネーション付き）
     if (!query && !category && !tag) {
       const { data: ads, error } = await supabase
         .from("ads")
         .select("*")
+        .eq("is_published", true)
         .order("created_at", { ascending: false })
+        .range(offset, offset + limit - 1)
       
       if (error) {
         console.error("Fetch all ads error:", error)
@@ -24,7 +28,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ ads: ads || [] })
     }
 
-    let queryBuilder = supabase.from("ads").select("*")
+    let queryBuilder = supabase
+      .from("ads")
+      .select("*")
+      .eq("is_published", true) // 公開済み広告のみ
 
     // カテゴリフィルタ
     if (category && category !== "all") {
@@ -43,7 +50,9 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const { data: ads, error } = await queryBuilder.order("created_at", { ascending: false })
+    const { data: ads, error } = await queryBuilder
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1)
 
     if (error) {
       console.error("Search error:", error)

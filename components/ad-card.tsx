@@ -13,6 +13,7 @@ import { createClient } from "@/lib/client"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { FavoriteButton } from "@/components/favorite-button"
+import { ReportButton } from "@/components/report-button"
 
 interface AdCardProps {
   ad: Ad
@@ -168,6 +169,11 @@ export function AdCard({ ad }: AdCardProps) {
                   <ExternalLink className="w-4 h-4" />
                 </Button>
               )}
+            </div>
+            
+            {/* 通報ボタン */}
+            <div className="flex justify-end mt-2">
+              <ReportButton adId={ad.id} adTitle={ad.title} />
             </div>
           </div>
         </Card>

@@ -12,16 +12,22 @@ export function AdGallery() {
   const [selectedTag, setSelectedTag] = useState<string>("")
   const [ads, setAds] = useState<Ad[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [hasMore, setHasMore] = useState(true)
 
   useEffect(() => {
     async function fetchAds() {
       setIsLoading(true)
+      setError(null)
 
       try {
         const params = new URLSearchParams()
         if (selectedCategory !== "all") params.append("category", selectedCategory)
         if (searchQuery.trim()) params.append("q", searchQuery.trim())
         if (selectedTag.trim()) params.append("tag", selectedTag.trim())
+        params.append("limit", "20")
+        params.append("offset", (currentPage * 20).toString())
 
         const url = `/api/ads/search${params.toString() ? `?${params.toString()}` : ''}`
         const response = await fetch(url)
@@ -29,13 +35,22 @@ export function AdGallery() {
 
         if (!response.ok) {
           console.error("Search error:", result.error, result.details)
+          setError(result.error || "広告の取得に失敗しました")
           setAds([])
           return
         }
 
-        setAds(result.ads || [])
+        const newAds = result.ads || []
+        if (currentPage === 0) {
+          setAds(newAds)
+        } else {
+          setAds(prev => [...prev, ...newAds])
+        }
+        
+        setHasMore(newAds.length === 20)
       } catch (error) {
         console.error("Search error:", error)
+        setError("ネットワークエラーが発生しました")
         setAds([])
       } finally {
         setIsLoading(false)
@@ -43,24 +58,41 @@ export function AdGallery() {
     }
 
     fetchAds()
-  }, [selectedCategory, searchQuery, selectedTag])
+  }, [selectedCategory, searchQuery, selectedTag, currentPage])
 
   const handleSearch = (query: string) => {
     setSearchQuery(query)
+    setCurrentPage(0)
+  }
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category)
+    setCurrentPage(0)
+  }
+
+  const handleTagChange = (tag: string) => {
+    setSelectedTag(tag)
+    setCurrentPage(0)
+  }
+
+  const loadMore = () => {
+    if (!isLoading && hasMore) {
+      setCurrentPage(prev => prev + 1)
+    }
   }
 
   const handleTagSearch = (tag: string) => {
     setSelectedTag(tag)
   }
 
-  if (isLoading) {
+  if (isLoading && ads.length === 0) {
     return (
       <div className="space-y-6">
         <EnhancedAdFilters 
           selectedCategory={selectedCategory} 
-          onCategoryChange={setSelectedCategory}
+          onCategoryChange={handleCategoryChange}
           onSearch={handleSearch}
-          onTagSearch={handleTagSearch}
+          onTagSearch={handleTagChange}
           searchQuery={searchQuery}
           selectedTag={selectedTag}
         />
@@ -71,13 +103,37 @@ export function AdGallery() {
     )
   }
 
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <EnhancedAdFilters 
+          selectedCategory={selectedCategory} 
+          onCategoryChange={handleCategoryChange}
+          onSearch={handleSearch}
+          onTagSearch={handleTagChange}
+          searchQuery={searchQuery}
+          selectedTag={selectedTag}
+        />
+        <div className="text-center py-12">
+          <p className="text-red-600">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            再読み込み
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <EnhancedAdFilters 
         selectedCategory={selectedCategory} 
-        onCategoryChange={setSelectedCategory}
+        onCategoryChange={handleCategoryChange}
         onSearch={handleSearch}
-        onTagSearch={handleTagSearch}
+        onTagSearch={handleTagChange}
         searchQuery={searchQuery}
         selectedTag={selectedTag}
       />
@@ -89,13 +145,27 @@ export function AdGallery() {
           </p>
         </div>
       ) : (
-        <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-4" style={{ columnFill: 'balance' }}>
-          {ads.map((ad) => (
-            <div key={ad.id} className="break-inside-avoid mb-4">
-              <AdCard ad={ad} />
+        <>
+          <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-4" style={{ columnFill: 'balance' }}>
+            {ads.map((ad) => (
+              <div key={ad.id} className="break-inside-avoid mb-4">
+                <AdCard ad={ad} />
+              </div>
+            ))}
+          </div>
+          
+          {hasMore && (
+            <div className="text-center py-8">
+              <button
+                onClick={loadMore}
+                disabled={isLoading}
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? "読み込み中..." : "さらに読み込む"}
+              </button>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   )

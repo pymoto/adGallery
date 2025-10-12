@@ -83,6 +83,11 @@ export function Footer() {
                   特定商取引法に基づく表示
                 </Link>
               </li>
+              <li>
+                <Link href="/legal/content-guidelines" className="text-muted-foreground hover:text-foreground transition-colors">
+                  投稿ガイドライン
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
@@ -101,6 +106,9 @@ export function Footer() {
               </Link>
               <Link href="/legal/specific-commercial-transactions" className="hover:text-foreground transition-colors">
                 特定商取引法
+              </Link>
+              <Link href="/legal/content-guidelines" className="hover:text-foreground transition-colors">
+                投稿ガイドライン
               </Link>
             </div>
           </div>
