@@ -19,6 +19,13 @@ export async function POST(request: NextRequest) {
     const stripe = createStripeClient()
     const supabase = await createClient()
 
+    if (!stripe) {
+      return NextResponse.json(
+        { error: "Stripe client not initialized" },
+        { status: 500 }
+      )
+    }
+
     let event
 
     try {
