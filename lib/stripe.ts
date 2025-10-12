@@ -12,6 +12,11 @@ function getStripeClient() {
   })
 }
 
+// エクスポート用の関数
+export function createClient() {
+  return getStripeClient()
+}
+
 export async function startCheckoutSession(priceId: string, userId: string) {
   const stripe = getStripeClient()
   

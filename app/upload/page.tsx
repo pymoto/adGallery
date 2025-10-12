@@ -11,8 +11,9 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { X, ImageIcon, Upload } from "lucide-react"
+import { X, ImageIcon, Upload, CreditCard } from "lucide-react"
 import { createClient } from "@/lib/client"
+import { PricingDisplay } from "@/components/pricing-display"
 
 export default function UploadPage() {
   const router = useRouter()
@@ -26,6 +27,7 @@ export default function UploadPage() {
     link_url: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isCreatingPayment, setIsCreatingPayment] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -87,7 +89,7 @@ export default function UploadPage() {
         .map((tag) => tag.trim())
         .filter((tag) => tag.length > 0)
 
-      // 広告データを挿入
+      // 広告データを挿入（未公開状態）
       const insertData: any = {
         title: formData.title,
         company: formData.company,
@@ -95,7 +97,8 @@ export default function UploadPage() {
         image_url: imagePreview,
         description: formData.description,
         tags: tagsArray,
-        user_id: user.id, // ユーザーIDを追加
+        user_id: user.id,
+        is_published: false, // 決済完了まで未公開
       }
 
       // link_urlが存在する場合のみ追加
@@ -103,31 +106,61 @@ export default function UploadPage() {
         insertData.link_url = formData.link_url.trim()
       }
 
-      const { data, error: insertError } = await supabase
+      const { data: adData, error: insertError } = await supabase
         .from("ads")
         .insert(insertData)
         .select()
+        .single()
 
       if (insertError) {
         console.error("Error inserting ad:", insertError)
-        console.error("Full error details:", JSON.stringify(insertError, null, 2))
-        
-        // link_urlカラムが存在しない場合のエラーメッセージ
-        if (insertError.message && insertError.message.includes('link_url')) {
-          setError(`データベースにlink_urlカラムが存在しません。管理者にお問い合わせください。`)
-        } else {
-          setError(`広告の公開に失敗しました: ${insertError.message || insertError.details || '不明なエラー'}`)
-        }
+        setError(`広告の作成に失敗しました: ${insertError.message || '不明なエラー'}`)
+        setIsSubmitting(false)
         return
       }
 
-      console.log("Ad created successfully:", data)
-      router.push("/")
+      // 決済セッションを作成
+      setIsCreatingPayment(true)
+      
+      try {
+        const paymentResponse = await fetch("/api/payments/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ adId: adData.id }),
+        })
+
+        if (!paymentResponse.ok) {
+          const errorData = await paymentResponse.json()
+          throw new Error(errorData.error || "決済セッションの作成に失敗しました")
+        }
+
+        const paymentData = await paymentResponse.json()
+        console.log("Payment response:", paymentData)
+        
+        // Stripe Checkoutにリダイレクト
+        if (paymentData.url) {
+          window.location.href = paymentData.url
+        } else {
+          console.error("Payment data:", paymentData)
+          throw new Error("決済URLが取得できませんでした")
+        }
+
+      } catch (paymentError) {
+        console.error("Payment creation error:", paymentError)
+        const errorMessage = paymentError instanceof Error ? paymentError.message : "不明なエラー"
+        setError(`決済処理に失敗しました: ${errorMessage}`)
+        setIsSubmitting(false)
+        setIsCreatingPayment(false)
+        return
+      }
+
     } catch (error) {
       console.error("Error:", error)
       setError("予期しないエラーが発生しました。")
-    } finally {
       setIsSubmitting(false)
+      setIsCreatingPayment(false)
     }
   }
 
@@ -146,7 +179,7 @@ export default function UploadPage() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-balance mb-3">広告をアップロード</h1>
             <p className="text-lg text-muted-foreground text-pretty">
@@ -154,7 +187,9 @@ export default function UploadPage() {
             </p>
           </div>
 
-          <Card>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <Card>
             <CardHeader>
               <CardTitle>広告情報を入力</CardTitle>
               <CardDescription>すべての項目を入力して、広告をギャラリーに公開しましょう</CardDescription>
@@ -203,7 +238,6 @@ export default function UploadPage() {
                       accept="image/*"
                       className="hidden"
                       onChange={handleImageChange}
-                      required
                     />
                   </div>
                 </div>
@@ -305,11 +339,25 @@ export default function UploadPage() {
                   <Button
                     type="submit"
                     className="flex-1 gap-2 h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-shadow"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isCreatingPayment}
                     size="lg"
                   >
-                    <Upload className="w-5 h-5" />
-                    {isSubmitting ? "公開中..." : "広告を公開"}
+                    {isSubmitting ? (
+                      <>
+                        <Upload className="w-5 h-5" />
+                        投稿中...
+                      </>
+                    ) : isCreatingPayment ? (
+                      <>
+                        <CreditCard className="w-5 h-5" />
+                        決済処理中...
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard className="w-5 h-5" />
+                        決済して投稿
+                      </>
+                    )}
                   </Button>
                   <Button
                     type="button"
@@ -325,9 +373,15 @@ export default function UploadPage() {
               </form>
             </CardContent>
           </Card>
+            </div>
+            
+            {/* 価格表示 */}
+            <div className="lg:col-span-1">
+              <PricingDisplay />
+            </div>
+          </div>
         </div>
       </main>
     </div>
   )
 }
-
