@@ -38,10 +38,15 @@ export default function SignUpPage() {
     }
 
     try {
-      // 現在のURLに基づいてリダイレクトURLを設定
-      const redirectUrl = typeof window !== 'undefined' 
-        ? `${window.location.origin}/auth/sign-up-success`
-        : '/auth/sign-up-success'
+      // 環境変数または現在のURLに基づいてリダイレクトURLを設定
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+      const redirectUrl = siteUrl 
+        ? `${siteUrl}/auth/sign-up-success`
+        : typeof window !== 'undefined' 
+          ? `${window.location.origin}/auth/sign-up-success`
+          : '/auth/sign-up-success'
+      
+      console.log("Setting email redirect URL to:", redirectUrl)
 
       const { data, error } = await supabase.auth.signUp({
         email,

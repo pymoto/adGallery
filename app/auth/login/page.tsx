@@ -61,6 +61,13 @@ export default function LoginPage() {
         setError("ユーザー情報を取得できませんでした")
         return
       }
+
+      // メール確認状態をチェック
+      if (!result.data.user.email_confirmed_at) {
+        console.log("Email not confirmed, user needs to verify email")
+        setError("メールアドレスの確認が必要です。確認メールをご確認ください。")
+        return
+      }
       
       console.log("Login successful, redirecting...")
       // 現在のドメインに基づいてリダイレクト
