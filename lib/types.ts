@@ -13,6 +13,7 @@ export interface Ad {
   user_id?: string
   likes_count?: number
   is_liked?: boolean
+  is_published?: boolean | null
 }
 
 export interface User {
