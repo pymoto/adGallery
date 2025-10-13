@@ -3,11 +3,11 @@ import { createClient } from "@/lib/server"
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { reason, description } = await request.json()
-    const adId = params.id
+    const { id: adId } = await params
 
     if (!reason) {
       return NextResponse.json(
