@@ -31,9 +31,16 @@ export default function LoginPage() {
       console.log("Using actual Supabase authentication")
       
       
+      // 現在のURLに基づいてリダイレクトURLを設定
+      const redirectUrl = typeof window !== 'undefined' 
+        ? `${window.location.origin}/auth/callback`
+        : '/auth/callback'
+      
       const result = await supabase.auth.signInWithPassword({
         email,
         password,
+      }, {
+        redirectTo: redirectUrl
       })
       
       console.log("Login response:", result)

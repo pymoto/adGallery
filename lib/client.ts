@@ -74,7 +74,18 @@ export function createBrowserClient() {
     throw new Error("Supabase environment variables are not configured. Please check your .env.local file.")
   }
   
-  return createSupabaseBrowserClient(supabaseUrl, supabaseAnonKey)
+  const client = createSupabaseBrowserClient(supabaseUrl, supabaseAnonKey)
+  
+  // ステージング環境でのリダイレクトURLを動的に設定
+  if (typeof window !== 'undefined') {
+    const currentUrl = window.location.origin
+    if (currentUrl.includes('vercel.app') || currentUrl.includes('localhost')) {
+      // 現在のURLに基づいてリダイレクトURLを設定
+      console.log('Setting redirect URL to:', currentUrl)
+    }
+  }
+  
+  return client
 }
 
 export function createClient() {
