@@ -118,23 +118,29 @@ export function AdGallery() {
             id: "00000000-0000-0000-0000-000000000001",
             title: "サンプル広告1",
             company: "サンプル会社",
+            description: "これはサンプル広告です。",
             category: "tech",
+            tags: ["サンプル", "テクノロジー"],
             image_url: "https://picsum.photos/400/300?random=1",
             link_url: "https://example.com",
             created_at: new Date().toISOString(),
             views: Math.floor(Math.random() * 100),
-            likes: Math.floor(Math.random() * 20)
+            likes: Math.floor(Math.random() * 20),
+            is_published: true
           },
           {
             id: "00000000-0000-0000-0000-000000000002", 
             title: "サンプル広告2",
             company: "サンプル会社2",
+            description: "これはサンプル広告です。",
             category: "fashion",
+            tags: ["サンプル", "ファッション"],
             image_url: "https://picsum.photos/400/300?random=2",
             link_url: "https://example.com",
             created_at: new Date(Date.now() - 86400000).toISOString(),
             views: Math.floor(Math.random() * 100),
-            likes: Math.floor(Math.random() * 20)
+            likes: Math.floor(Math.random() * 20),
+            is_published: true
           },
           {
             id: "00000000-0000-0000-0000-000000000003",
