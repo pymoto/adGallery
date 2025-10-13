@@ -196,12 +196,15 @@ export function AdGallery() {
           id: "00000000-0000-0000-0000-000000000001",
           title: "サンプル広告1",
           company: "サンプル会社",
+          description: "これはサンプル広告です。",
           category: "tech",
+          tags: ["サンプル", "テクノロジー"],
           image_url: "https://picsum.photos/400/300?random=1",
           link_url: "https://example.com",
           created_at: new Date().toISOString(),
           views: Math.floor(Math.random() * 100),
-          likes: Math.floor(Math.random() * 20)
+          likes: Math.floor(Math.random() * 20),
+          is_published: true
         }
       ]
       setAds(fallbackAds)
