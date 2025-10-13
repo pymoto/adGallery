@@ -62,12 +62,12 @@ export function createBrowserClient() {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   
   // 環境変数の確認（初回のみ）
-  if (process.env.NODE_ENV === 'development' && !globalThis.supabaseEnvChecked) {
+  if (process.env.NODE_ENV === 'development' && !(globalThis as any).supabaseEnvChecked) {
     console.log("Environment check:", {
       url: supabaseUrl,
       key: supabaseAnonKey ? "***configured***" : "not configured"
     })
-    globalThis.supabaseEnvChecked = true
+    ;(globalThis as any).supabaseEnvChecked = true
   }
   
   if (!supabaseUrl || !supabaseAnonKey) {
