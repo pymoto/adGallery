@@ -31,17 +31,9 @@ export default function LoginPage() {
       console.log("Using actual Supabase authentication")
       
       
-      // 現在のURLに基づいてリダイレクトURLを設定
-      const redirectUrl = typeof window !== 'undefined' 
-        ? `${window.location.origin}/auth/callback`
-        : '/auth/callback'
-      
       const result = await supabase.auth.signInWithPassword({
         email,
         password,
-        options: {
-          redirectTo: redirectUrl
-        }
       })
       
       console.log("Login response:", result)
@@ -71,8 +63,11 @@ export default function LoginPage() {
       }
       
       console.log("Login successful, redirecting...")
-      // ページをリロードして認証状態を更新
-      window.location.href = "/"
+      // 現在のドメインに基づいてリダイレクト
+      const redirectUrl = typeof window !== 'undefined' 
+        ? window.location.origin + "/"
+        : "/"
+      window.location.href = redirectUrl
     } catch (error: unknown) {
       console.error("Login catch error:", error)
       console.error("Error type:", typeof error)
