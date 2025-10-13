@@ -60,41 +60,87 @@ export function ReportButton({ adId, adTitle }: ReportButtonProps) {
   if (!isOpen) {
     return (
       <Button
-        variant="outline"
+        variant="ghost"
         size="sm"
-        onClick={() => setIsOpen(true)}
-        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          setIsOpen(true)
+        }}
+        className="h-auto p-1 text-muted-foreground hover:text-red-600 hover:bg-red-50 transition-colors"
+        title="不適切なコンテンツを通報"
       >
-        <Flag className="w-4 h-4 mr-1" />
-        通報
+        <Flag className="w-4 h-4" />
       </Button>
     )
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="flex flex-row items-center justify-between">
+    <div 
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          setIsOpen(false)
+        }
+      }}
+    >
+      <Card 
+        className="w-full max-w-md" 
+        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+        onMouseUp={(e) => e.stopPropagation()}
+      >
+        <CardHeader 
+          className="flex flex-row items-center justify-between"
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onMouseUp={(e) => e.stopPropagation()}
+        >
           <CardTitle className="text-lg">不適切なコンテンツを通報</CardTitle>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setIsOpen(false)}
+            onClick={(e) => {
+              e.stopPropagation()
+              setIsOpen(false)
+            }}
           >
             <X className="w-4 h-4" />
           </Button>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
+        <CardContent 
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onMouseUp={(e) => e.stopPropagation()}
+        >
+          <form 
+            onSubmit={handleSubmit} 
+            className="space-y-4" 
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            onMouseUp={(e) => e.stopPropagation()}
+          >
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+              onMouseUp={(e) => e.stopPropagation()}
+            >
               <Label htmlFor="ad-title">対象広告</Label>
               <p className="text-sm text-muted-foreground mt-1">{adTitle}</p>
             </div>
 
-            <div>
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+              onMouseUp={(e) => e.stopPropagation()}
+            >
               <Label htmlFor="reason">通報理由 *</Label>
               <Select value={reason} onValueChange={setReason} required>
-                <SelectTrigger>
+                <SelectTrigger 
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onMouseUp={(e) => e.stopPropagation()}
+                >
                   <SelectValue placeholder="理由を選択してください" />
                 </SelectTrigger>
                 <SelectContent>
@@ -109,13 +155,21 @@ export function ReportButton({ adId, adTitle }: ReportButtonProps) {
               </Select>
             </div>
 
-            <div>
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+              onMouseUp={(e) => e.stopPropagation()}
+            >
               <Label htmlFor="description">詳細説明（任意）</Label>
               <Textarea
                 id="description"
                 placeholder="具体的な理由や状況を教えてください"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                onFocus={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
+                onMouseUp={(e) => e.stopPropagation()}
                 rows={3}
               />
             </div>
@@ -132,11 +186,19 @@ export function ReportButton({ adId, adTitle }: ReportButtonProps) {
               </div>
             )}
 
-            <div className="flex gap-2">
+            <div 
+              className="flex gap-2"
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+              onMouseUp={(e) => e.stopPropagation()}
+            >
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setIsOpen(false)}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setIsOpen(false)
+                }}
                 className="flex-1"
               >
                 キャンセル
@@ -144,6 +206,7 @@ export function ReportButton({ adId, adTitle }: ReportButtonProps) {
               <Button
                 type="submit"
                 disabled={!reason || isSubmitting}
+                onClick={(e) => e.stopPropagation()}
                 className="flex-1"
               >
                 {isSubmitting ? "送信中..." : "通報する"}

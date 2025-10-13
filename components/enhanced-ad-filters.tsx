@@ -68,25 +68,25 @@ export function EnhancedAdFilters({
   }, [])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* 検索バー */}
       <SearchBar 
         onSearch={onSearch}
         placeholder="タイトル、説明、会社名で検索..."
-        className="max-w-md"
+        className="w-full max-w-md"
       />
 
       {/* カテゴリフィルター */}
       <div>
-        <h3 className="text-sm font-medium mb-3">カテゴリ</h3>
-        <div className="flex flex-wrap gap-2">
+        <h3 className="text-sm font-medium mb-2 sm:mb-3">カテゴリ</h3>
+        <div className="flex flex-wrap gap-1 sm:gap-2">
           {categories.map((category) => (
             <Button
               key={category.id}
               variant={selectedCategory === category.id ? "default" : "outline"}
               size="sm"
               onClick={() => onCategoryChange(category.id)}
-              className="rounded-full"
+              className="rounded-full text-xs sm:text-sm"
             >
               {category.label}
             </Button>
@@ -97,13 +97,13 @@ export function EnhancedAdFilters({
       {/* 人気タグ */}
       {popularTags.length > 0 && (
         <div>
-          <h3 className="text-sm font-medium mb-3">人気タグ</h3>
-          <div className="flex flex-wrap gap-2">
+          <h3 className="text-sm font-medium mb-2 sm:mb-3">人気タグ</h3>
+          <div className="flex flex-wrap gap-1 sm:gap-2">
             {popularTags.map((tag) => (
               <Badge
                 key={tag}
                 variant={selectedTag === tag ? "default" : "secondary"}
-                className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors text-xs"
                 onClick={() => onTagSearch(tag)}
               >
                 {tag}
@@ -115,31 +115,31 @@ export function EnhancedAdFilters({
 
       {/* アクティブフィルターの表示 */}
       {(searchQuery || selectedTag) && (
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-sm text-muted-foreground">アクティブフィルター:</span>
+        <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+          <span className="text-xs sm:text-sm text-muted-foreground">アクティブフィルター:</span>
           {searchQuery && (
-            <Badge variant="outline" className="gap-1">
+            <Badge variant="outline" className="gap-1 text-xs">
               <span>検索: {searchQuery}</span>
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-4 w-4 p-0 hover:bg-muted"
+                className="h-3 w-3 p-0 hover:bg-muted"
                 onClick={() => onSearch("")}
               >
-                <X className="w-3 h-3" />
+                <X className="w-2 h-2" />
               </Button>
             </Badge>
           )}
           {selectedTag && (
-            <Badge variant="outline" className="gap-1">
+            <Badge variant="outline" className="gap-1 text-xs">
               <span>タグ: {selectedTag}</span>
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-4 w-4 p-0 hover:bg-muted"
+                className="h-3 w-3 p-0 hover:bg-muted"
                 onClick={() => onTagSearch("")}
               >
-                <X className="w-3 h-3" />
+                <X className="w-2 h-2" />
               </Button>
             </Badge>
           )}

@@ -5,8 +5,10 @@ import { createClient as createStripeClient } from "@/lib/stripe"
 export async function POST(request: NextRequest) {
   try {
     const { adId } = await request.json()
+    console.log("Payment API called with adId:", adId)
 
     if (!adId) {
+      console.error("No adId provided")
       return NextResponse.json(
         { error: "広告IDが必要です" },
         { status: 400 }
@@ -18,7 +20,10 @@ export async function POST(request: NextRequest) {
 
     // 認証チェック
     const { data: { user }, error: authError } = await supabase.auth.getUser()
+    console.log("Payment API auth check:", { user: user?.id, authError })
+    
     if (authError || !user) {
+      console.error("Payment API auth failed:", authError)
       return NextResponse.json(
         { error: "認証が必要です" },
         { status: 401 }
@@ -199,12 +204,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    return NextResponse.json({
+    const response = {
       sessionId: session.id,
       url: session.url,
       amount: currentPrice,
       isSale,
-    })
+    }
+    
+    console.log("Payment API response:", response)
+    return NextResponse.json(response)
 
   } catch (error) {
     console.error("Payment creation error:", error)

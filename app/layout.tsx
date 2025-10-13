@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ad Gallery",
-  description: "広告ギャラリーアプリケーション",
+  title: "Adscopia",
+  description: "クリエイティブな広告デザインを発見し、インスピレーションを得るプラットフォーム",
 };
 
 export default function RootLayout({

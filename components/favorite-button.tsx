@@ -26,6 +26,13 @@ export function FavoriteButton({ adId, className }: FavoriteButtonProps) {
           setIsChecking(false)
           return
         }
+        
+        // フォールバック広告の場合はお気に入り機能を無効化
+        if (adId.startsWith("00000000-0000-0000-0000-000000000")) {
+          setIsFavorited(false)
+          setIsChecking(false)
+          return
+        }
 
         const { data, error } = await supabase
           .from("favorites")
@@ -52,6 +59,11 @@ export function FavoriteButton({ adId, className }: FavoriteButtonProps) {
   const handleToggle = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
+    
+    // フォールバック広告の場合はお気に入り機能を無効化
+    if (adId.startsWith("00000000-0000-0000-0000-000000000")) {
+      return
+    }
     
     const { data: { user } } = await supabase.auth.getUser()
     
@@ -115,6 +127,7 @@ export function FavoriteButton({ adId, className }: FavoriteButtonProps) {
       className={`h-auto p-1 hover:bg-yellow-50 transition-colors ${isFavorited ? "text-yellow-500" : "text-muted-foreground hover:text-yellow-500"} ${className}`}
       onClick={handleToggle}
       disabled={isLoading}
+      title={isFavorited ? "お気に入りから削除" : "お気に入りに追加"}
     >
       <div className="flex items-center gap-1">
         <Star className={`w-4 h-4 transition-colors ${isFavorited ? "fill-yellow-500 text-yellow-500" : ""}`} />

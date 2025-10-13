@@ -42,7 +42,7 @@ export default function Home() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-4xl font-bold text-balance mb-3">広告デザインギャラリー</h1>
+              <h1 className="text-4xl font-bold text-balance mb-3">Adscopia</h1>
               <p className="text-lg text-muted-foreground text-pretty">
                 クリエイティブな広告デザインを発見し、インスピレーションを得ましょう
               </p>

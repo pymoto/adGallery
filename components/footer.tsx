@@ -9,9 +9,9 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* サービス情報 */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">AdGallery</h3>
+            <h3 className="text-lg font-semibold">Adscopia</h3>
             <p className="text-sm text-muted-foreground">
-              美しい広告を投稿・共有できるプラットフォーム
+              クリエイティブな広告デザインを発見し、インスピレーションを得るプラットフォーム
             </p>
           </div>
 

@@ -18,7 +18,7 @@ export default function TermsOfServicePage() {
                 <div>
                   <h3 className="text-lg font-semibold mb-2">第1条（適用）</h3>
                   <p className="text-sm text-muted-foreground">
-                    本利用規約（以下「本規約」）は、AdGallery（以下「当サービス」）の利用条件を定めるものです。利用者は、本規約に同意の上、当サービスを利用するものとします。
+                    本利用規約（以下「本規約」）は、Adscopia（以下「当サービス」）の利用条件を定めるものです。利用者は、本規約に同意の上、当サービスを利用するものとします。
                   </p>
                 </div>
 
@@ -65,7 +65,7 @@ export default function TermsOfServicePage() {
                 <div>
                   <h3 className="text-lg font-semibold mb-2">第6条（決済について）</h3>
                   <p className="text-sm text-muted-foreground">
-                    広告投稿には決済が必要です。決済はStripeを通じて安全に処理されます。決済完了後、広告は即座に公開されます。
+                    広告投稿には決済が必要です。決済はStripeを通じて安全に処理されます。決済完了後、広告は管理者による承認を経て公開されます。承認には通常1-3営業日程度かかります。
                   </p>
                 </div>
 

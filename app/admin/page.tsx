@@ -118,7 +118,7 @@ export default function AdminDashboard() {
       <h1 className="text-3xl font-bold">ダッシュボード</h1>
 
       {/* 統計カード */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">総ユーザー数</CardTitle>
@@ -169,7 +169,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* 最近の活動 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <Card>
           <CardHeader>
             <CardTitle>最近の広告</CardTitle>
@@ -177,18 +177,18 @@ export default function AdminDashboard() {
           <CardContent>
             <div className="space-y-4">
               {stats.recentAds.map((ad) => (
-                <div key={ad.id} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex-1">
-                    <p className="font-medium">{ad.title}</p>
-                    <p className="text-sm text-muted-foreground">
+                <div key={ad.id} className="flex items-center justify-between p-2 sm:p-3 border rounded-lg">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm sm:text-base truncate">{ad.title}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       {new Date(ad.created_at).toLocaleDateString()}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 ml-2">
                     {ad.is_published ? (
-                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
                     ) : (
-                      <Clock className="h-4 w-4 text-yellow-500" />
+                      <Clock className="h-4 w-4 text-yellow-500 flex-shrink-0" />
                     )}
                   </div>
                 </div>
@@ -204,18 +204,18 @@ export default function AdminDashboard() {
           <CardContent>
             <div className="space-y-4">
               {stats.recentReports.map((report) => (
-                <div key={report.id} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex-1">
-                    <p className="font-medium">通報 #{report.id}</p>
-                    <p className="text-sm text-muted-foreground">
+                <div key={report.id} className="flex items-center justify-between p-2 sm:p-3 border rounded-lg">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm sm:text-base truncate">通報 #{report.id}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       {report.reason} • {new Date(report.created_at).toLocaleDateString()}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 ml-2">
                     {report.status === "pending" ? (
-                      <AlertTriangle className="h-4 w-4 text-red-500" />
+                      <AlertTriangle className="h-4 w-4 text-red-500 flex-shrink-0" />
                     ) : (
-                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
                     )}
                   </div>
                 </div>
@@ -231,16 +231,16 @@ export default function AdminDashboard() {
           <CardTitle>クイックアクション</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-4">
-            <Button variant="outline">
+          <div className="flex flex-wrap gap-2 sm:gap-4">
+            <Button variant="outline" className="flex-1 sm:flex-none">
               <Flag className="mr-2 h-4 w-4" />
               通報を確認
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" className="flex-1 sm:flex-none">
               <Users className="mr-2 h-4 w-4" />
               ユーザー管理
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" className="flex-1 sm:flex-none">
               <Image className="mr-2 h-4 w-4" />
               広告管理
             </Button>

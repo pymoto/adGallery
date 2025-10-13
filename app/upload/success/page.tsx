@@ -32,6 +32,13 @@ function SuccessContent() {
           return
         }
 
+        // ローカル決済用セッションIDの処理
+        if (sessionId.startsWith("local-session-")) {
+          setAdTitle("ローカル広告")
+          setStatus("success")
+          return
+        }
+
         // 決済情報を確認
         const { data: payment, error: paymentError } = await supabase
           .from("payments")
@@ -126,8 +133,13 @@ function SuccessContent() {
               <CheckCircle2 className="w-16 h-16 mx-auto mb-4 text-green-500" />
               <h2 className="text-3xl font-bold mb-2">決済完了！</h2>
               <p className="text-muted-foreground mb-4">
-                お支払いが完了し、広告がギャラリーに公開されました。
+                お支払いが完了しました。広告は管理者の承認後に公開されます。
               </p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <p className="text-blue-800 text-sm">
+                  <strong>承認プロセス：</strong> 管理者が内容を確認し、承認後（通常24時間以内）にギャラリーに公開されます。
+                </p>
+              </div>
               {adTitle && (
                 <p className="text-lg font-medium text-primary mb-8">
                   「{adTitle}」

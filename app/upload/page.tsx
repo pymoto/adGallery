@@ -34,15 +34,32 @@ export default function UploadPage() {
   // 認証チェック
   useEffect(() => {
     const checkAuth = async () => {
-      const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (!user) {
+      try {
+        const supabase = createClient()
+        const { data: { user }, error } = await supabase.auth.getUser()
+        
+        console.log("Auth check:", { user, error })
+        
+        if (error) {
+          console.error("Auth error:", error)
+          setError("認証エラーが発生しました。ログインし直してください。")
+          router.push("/auth/login")
+          return
+        }
+        
+        if (!user) {
+          console.log("No user found, redirecting to login")
+          router.push("/auth/login")
+          return
+        }
+        
+        console.log("User authenticated:", user.id)
+        setIsLoading(false)
+      } catch (error) {
+        console.error("Auth check failed:", error)
+        setError("認証チェックに失敗しました。")
         router.push("/auth/login")
-        return
       }
-      
-      setIsLoading(false)
     }
     
     checkAuth()
@@ -77,11 +94,16 @@ export default function UploadPage() {
       // 現在のユーザーを取得
       const { data: { user }, error: userError } = await supabase.auth.getUser()
       
+      console.log("User authentication check:", { user, userError })
+      
       if (userError || !user) {
+        console.error("Authentication failed:", userError)
         setError("ログインが必要です。ログインページに移動してください。")
         setIsSubmitting(false)
         return
       }
+
+      console.log("User ID for ad creation:", user.id)
 
       // タグを配列に変換
       const tagsArray = formData.tags
@@ -106,6 +128,7 @@ export default function UploadPage() {
         insertData.link_url = formData.link_url.trim()
       }
 
+      // データベースに直接挿入
       const { data: adData, error: insertError } = await supabase
         .from("ads")
         .insert(insertData)
@@ -114,7 +137,8 @@ export default function UploadPage() {
 
       if (insertError) {
         console.error("Error inserting ad:", insertError)
-        setError(`広告の作成に失敗しました: ${insertError.message || '不明なエラー'}`)
+        console.error("Full error details:", JSON.stringify(insertError, null, 2))
+        setError(`広告の作成に失敗しました: ${insertError.message || insertError.details || JSON.stringify(insertError) || '不明なエラー'}`)
         setIsSubmitting(false)
         return
       }
@@ -123,6 +147,8 @@ export default function UploadPage() {
       setIsCreatingPayment(true)
       
       try {
+        console.log("Creating payment for ad:", adData.id)
+        
         const paymentResponse = await fetch("/api/payments/create", {
           method: "POST",
           headers: {
@@ -131,19 +157,27 @@ export default function UploadPage() {
           body: JSON.stringify({ adId: adData.id }),
         })
 
+        console.log("Payment response status:", paymentResponse.status)
+        
         if (!paymentResponse.ok) {
           const errorData = await paymentResponse.json()
+          console.error("Payment API error:", errorData)
           throw new Error(errorData.error || "決済セッションの作成に失敗しました")
         }
 
         const paymentData = await paymentResponse.json()
-        console.log("Payment response:", paymentData)
+        console.log("Payment response data:", paymentData)
+        console.log("Payment data keys:", Object.keys(paymentData))
+        console.log("Payment URL:", paymentData.url)
+        console.log("Payment sessionId:", paymentData.sessionId)
         
         // Stripe Checkoutにリダイレクト
         if (paymentData.url) {
+          console.log("Redirecting to Stripe:", paymentData.url)
           window.location.href = paymentData.url
         } else {
-          console.error("Payment data:", paymentData)
+          console.error("No payment URL received:", paymentData)
+          console.error("Available keys:", Object.keys(paymentData))
           throw new Error("決済URLが取得できませんでした")
         }
 
@@ -169,7 +203,12 @@ export default function UploadPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">読み込み中...</p>
+          <p className="text-muted-foreground">認証を確認中...</p>
+          {error && (
+            <div className="mt-4 p-4 bg-destructive/10 text-destructive rounded-lg">
+              <p className="text-sm">{error}</p>
+            </div>
+          )}
         </div>
       </div>
     )

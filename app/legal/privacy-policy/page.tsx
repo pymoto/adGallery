@@ -25,6 +25,8 @@ export default function PrivacyPolicyPage() {
                     <li>パスワード（ユーザー登録時）</li>
                     <li>広告投稿時の画像・テキスト情報</li>
                     <li>決済情報（Stripe経由で安全に処理）</li>
+                    <li>アクセスログ・利用状況データ</li>
+                    <li>お気に入り・いいね等の行動データ</li>
                   </ul>
                 </div>
 
@@ -37,8 +39,11 @@ export default function PrivacyPolicyPage() {
                     <li>ユーザー認証・アカウント管理</li>
                     <li>広告投稿・表示サービス</li>
                     <li>決済処理</li>
-                    <li>サービス改善・分析</li>
+                    <li>お気に入り・いいね機能</li>
+                    <li>分析・統計データの作成</li>
+                    <li>サービス改善・機能開発</li>
                     <li>お客様サポート</li>
+                    <li>不正利用の防止</li>
                   </ul>
                 </div>
 
@@ -88,8 +93,7 @@ export default function PrivacyPolicyPage() {
                     個人情報の取扱いに関するお問い合わせは、以下までご連絡ください：
                   </p>
                   <p className="text-sm text-muted-foreground mt-2">
-                    メール：privacy@adgallery.com（仮）<br />
-                    電話：03-1234-5678（仮）
+                    メール：warabiii.com@gmail.com<br />
                   </p>
                 </div>
               </div>

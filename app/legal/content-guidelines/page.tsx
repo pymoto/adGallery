@@ -25,6 +25,7 @@ export default function ContentGuidelinesPage() {
                 </div>
                 <p className="text-sm text-blue-700">
                   すべての投稿は、以下のガイドラインに従ってください。不適切なコンテンツは削除される場合があります。
+                  投稿された広告は管理者による承認が必要です。承認には通常1-3営業日程度かかります。
                 </p>
               </div>
 
@@ -108,8 +109,9 @@ export default function ContentGuidelinesPage() {
                     </p>
                     <ul className="text-sm text-orange-700 space-y-1 list-disc list-inside">
                       <li>各広告の「通報」ボタンを使用</li>
-                      <li>support@adgallery.com にメール送信</li>
+                      <li>support@adscopia.com にメール送信</li>
                       <li>具体的な理由と共に通報してください</li>
+                      <li>通報されたコンテンツは管理者が確認し、適切に対処します</li>
                     </ul>
                   </div>
                 </div>

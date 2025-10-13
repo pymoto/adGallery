@@ -83,7 +83,15 @@ export default function AdsPage() {
         return
       }
 
-      setAds(data || [])
+      // 承認待ちの広告を優先表示
+      const sortedAds = (data || []).sort((a, b) => {
+        if (a.is_published === b.is_published) {
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        }
+        return a.is_published ? 1 : -1
+      })
+
+      setAds(sortedAds)
     } catch (error) {
       console.error("Error fetching ads:", error)
     } finally {
@@ -217,8 +225,8 @@ export default function AdsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">下書き</CardTitle>
-            <EyeOff className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">承認待ち</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -254,7 +262,9 @@ export default function AdsPage() {
           ) : (
             <div className="space-y-4">
               {ads.map((ad) => (
-                <div key={ad.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div key={ad.id} className={`flex items-center justify-between p-4 border rounded-lg ${
+                  !ad.is_published ? 'bg-orange-50 border-orange-200' : ''
+                }`}>
                   <div className="flex items-center space-x-4">
                     <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
                       <img 
@@ -269,7 +279,7 @@ export default function AdsPage() {
                         {ad.is_published ? (
                           <Badge variant="default" className="text-xs">公開済み</Badge>
                         ) : (
-                          <Badge variant="secondary" className="text-xs">下書き</Badge>
+                          <Badge variant="destructive" className="text-xs">承認待ち</Badge>
                         )}
                         <Badge variant="outline" className="text-xs">{ad.category}</Badge>
                       </div>

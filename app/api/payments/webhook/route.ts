@@ -75,21 +75,11 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // 広告を公開状態に更新
-      const { error: adUpdateError } = await supabase
-        .from("ads")
-        .update({ is_published: true })
-        .eq("id", ad_id)
+      // 決済完了後も管理者承認待ちのままにする
+      // 広告は is_published: false のまま維持
+      // 管理者が手動で承認するまで公開されない
 
-      if (adUpdateError) {
-        console.error("Ad update error:", adUpdateError)
-        return NextResponse.json(
-          { error: "Ad update failed" },
-          { status: 500 }
-        )
-      }
-
-      console.log(`Payment completed for ad ${ad_id} by user ${user_id}`)
+      console.log(`Payment completed for ad ${ad_id} by user ${user_id} - awaiting admin approval`)
     }
 
     // 決済失敗時の処理
