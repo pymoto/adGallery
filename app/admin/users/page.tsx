@@ -14,7 +14,8 @@ import {
   ShieldOff,
   Mail,
   Calendar,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Trash2
 } from "lucide-react"
 
 interface User {
@@ -30,6 +31,8 @@ export default function UsersPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [roleFilter, setRoleFilter] = useState<string>("all")
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
+  const [deleteConfirm, setDeleteConfirm] = useState<{ userId: string; email: string } | null>(null)
 
   useEffect(() => {
     fetchUsers()
@@ -115,6 +118,43 @@ export default function UsersPage() {
     }
   }
 
+  async function deleteUser(userId: string) {
+    setDeletingUserId(userId)
+    
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'ユーザーの削除に失敗しました')
+      }
+
+      // 成功時はユーザー一覧を更新
+      setUsers(users.filter(user => user.id !== userId))
+      setDeleteConfirm(null)
+      alert(`ユーザー ${result.deletedUser.email} を削除しました`)
+    } catch (error) {
+      console.error('User deletion error:', error)
+      alert(error instanceof Error ? error.message : 'ユーザーの削除に失敗しました')
+    } finally {
+      setDeletingUserId(null)
+    }
+  }
+
+  function handleDeleteClick(user: User) {
+    setDeleteConfirm({ userId: user.id, email: user.email })
+  }
+
+  function cancelDelete() {
+    setDeleteConfirm(null)
+  }
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -197,11 +237,6 @@ export default function UsersPage() {
           <CardTitle>ユーザー一覧</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="mb-4 p-2 bg-gray-100 rounded text-sm">
-            <strong>Debug Info:</strong> Users length: {users.length}, Loading: {isLoading.toString()}
-            <br />
-            <strong>Users data:</strong> {JSON.stringify(users, null, 2)}
-          </div>
           {users.length === 0 ? (
             <div className="text-center py-12">
               <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
@@ -255,6 +290,15 @@ export default function UsersPage() {
                         </>
                       )}
                     </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDeleteClick(user)}
+                      disabled={deletingUserId === user.id}
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      {deletingUserId === user.id ? '削除中...' : '削除'}
+                    </Button>
                   </div>
                 </div>
                 )
@@ -263,6 +307,38 @@ export default function UsersPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* 削除確認ダイアログ */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">ユーザーを削除</h3>
+            <p className="text-gray-600 mb-6">
+              ユーザー <strong>{deleteConfirm.email}</strong> を削除しますか？
+              <br />
+              <span className="text-sm text-red-600">
+                この操作は取り消せません。ユーザーの広告、お気に入り、通報などの関連データもすべて削除されます。
+              </span>
+            </p>
+            <div className="flex gap-3 justify-end">
+              <Button
+                variant="outline"
+                onClick={cancelDelete}
+                disabled={deletingUserId === deleteConfirm.userId}
+              >
+                キャンセル
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => deleteUser(deleteConfirm.userId)}
+                disabled={deletingUserId === deleteConfirm.userId}
+              >
+                {deletingUserId === deleteConfirm.userId ? '削除中...' : '削除する'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
