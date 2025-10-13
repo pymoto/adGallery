@@ -48,14 +48,18 @@ export async function DELETE(
       .single()
 
     if (userError || !targetUser) {
+      console.error("Target user not found:", { userId, userError })
       return NextResponse.json(
         { error: "ユーザーが見つかりません" },
         { status: 404 }
       )
     }
 
+    console.log("Deleting user:", { id: targetUser.id, email: targetUser.email })
+
     // ユーザーに関連するデータを削除
     // 1. ユーザーの広告を削除
+    console.log("Deleting user ads...")
     const { error: adsError } = await supabase
       .from("ads")
       .delete()
@@ -68,8 +72,10 @@ export async function DELETE(
         { status: 500 }
       )
     }
+    console.log("User ads deleted successfully")
 
     // 2. ユーザーのお気に入りを削除
+    console.log("Deleting user favorites...")
     const { error: favoritesError } = await supabase
       .from("favorites")
       .delete()
@@ -82,8 +88,10 @@ export async function DELETE(
         { status: 500 }
       )
     }
+    console.log("User favorites deleted successfully")
 
-    // 3. ユーザーの通報を削除
+    // 3. ユーザーの通報を削除（エラーがあっても続行）
+    console.log("Deleting user reports...")
     const { error: reportsError } = await supabase
       .from("reports")
       .delete()
@@ -91,13 +99,14 @@ export async function DELETE(
 
     if (reportsError) {
       console.error("Error deleting user reports:", reportsError)
-      return NextResponse.json(
-        { error: "ユーザーの通報の削除に失敗しました" },
-        { status: 500 }
-      )
+      // 通報の削除に失敗しても続行（通報は必須ではない）
+      console.log("Continuing with user deletion despite reports deletion error")
+    } else {
+      console.log("User reports deleted successfully")
     }
 
     // 4. ユーザーのプロファイルを削除
+    console.log("Deleting user profile...")
     const { error: profileDeleteError } = await supabase
       .from("profiles")
       .delete()
@@ -110,6 +119,7 @@ export async function DELETE(
         { status: 500 }
       )
     }
+    console.log("User profile deleted successfully")
 
     // 5. 最後にauth.usersから削除（Supabaseの制限により、通常は自動削除される）
     // 注意: auth.usersからの削除はSupabaseの制限により、通常はプロファイル削除時に自動的に行われる

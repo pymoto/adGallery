@@ -132,8 +132,11 @@ export default function UsersPage() {
       const result = await response.json()
 
       if (!response.ok) {
+        console.error('Delete API error:', result)
         throw new Error(result.error || 'ユーザーの削除に失敗しました')
       }
+
+      console.log('User deletion successful:', result)
 
       // 成功時はユーザー一覧を更新
       setUsers(users.filter(user => user.id !== userId))
