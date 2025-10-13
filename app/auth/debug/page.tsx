@@ -49,7 +49,7 @@ export default function AuthDebug() {
         })
       } catch (error) {
         console.error('Auth debug error:', error)
-        setAuthInfo({ error: error.message })
+        setAuthInfo({ error: error instanceof Error ? error.message : String(error) })
       } finally {
         setLoading(false)
       }
