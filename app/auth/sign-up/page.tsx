@@ -38,8 +38,9 @@ export default function SignUpPage() {
     }
 
     try {
-      // 環境変数または現在のURLに基づいてリダイレクトURLを設定
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+      // 環境別設定からサイトURLを取得
+      const { getSiteUrl } = await import('@/lib/env-config')
+      const siteUrl = getSiteUrl()
       const redirectUrl = siteUrl 
         ? `${siteUrl}/auth/sign-up-success`
         : typeof window !== 'undefined' 

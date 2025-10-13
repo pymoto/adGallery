@@ -1,4 +1,5 @@
 import { createBrowserClient as createSupabaseBrowserClient } from "@supabase/ssr"
+import { getSupabaseConfig } from "./env-config"
 
 // モックユーザーストレージ（ローカルストレージを使用）
 const getMockUsers = (): Map<string, { email: string; password: string; id: string; created_at: string }> => {
@@ -57,9 +58,8 @@ let mockUsers = getMockUsers()
 let currentUser = getCurrentUser()
 
 export function createBrowserClient() {
-  // 環境変数から取得（フォールバックなし）
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  // 環境別設定から取得
+  const { url: supabaseUrl, anonKey: supabaseAnonKey } = getSupabaseConfig()
   
   // 環境変数の確認（初回のみ）
   if (process.env.NODE_ENV === 'development' && !(globalThis as any).supabaseEnvChecked) {
