@@ -44,7 +44,7 @@ export default function MyPage() {
         
         const { data: myAdsData, error: myAdsError } = await supabase
           .from("ads")
-          .select("id, title, company, category, image_url, link_url, created_at, is_published")
+          .select("id, title, company, category, image_url, link_url, created_at, is_published, description, tags, views, likes")
           .eq("user_id", user.id)
           .order("created_at", { ascending: false })
           .limit(50) // 制限を追加
