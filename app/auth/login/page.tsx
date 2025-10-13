@@ -39,8 +39,9 @@ export default function LoginPage() {
       const result = await supabase.auth.signInWithPassword({
         email,
         password,
-      }, {
-        redirectTo: redirectUrl
+        options: {
+          redirectTo: redirectUrl
+        }
       })
       
       console.log("Login response:", result)
