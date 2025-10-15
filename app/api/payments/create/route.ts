@@ -183,6 +183,15 @@ export async function POST(request: NextRequest) {
     }
 
     // 決済レコードを作成
+    console.log("Creating payment record with data:", {
+      user_id: user.id,
+      ad_id: adId,
+      pricing_tier_id: pricingTier?.id,
+      amount: currentPrice,
+      stripe_session_id: session.id,
+      status: "pending",
+    })
+
     const { data: payment, error: paymentError } = await supabase
       .from("payments")
       .insert({
@@ -197,9 +206,22 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (paymentError) {
-      console.error("Payment creation error:", paymentError)
+      console.error("Payment creation error details:", {
+        error: paymentError,
+        code: paymentError.code,
+        message: paymentError.message,
+        details: paymentError.details,
+        hint: paymentError.hint,
+        data: {
+          user_id: user.id,
+          ad_id: adId,
+          pricing_tier_id: pricingTier?.id,
+          amount: currentPrice,
+          stripe_session_id: session.id,
+        }
+      })
       return NextResponse.json(
-        { error: "決済レコードの作成に失敗しました" },
+        { error: `決済レコードの作成に失敗しました: ${paymentError.message}` },
         { status: 500 }
       )
     }
